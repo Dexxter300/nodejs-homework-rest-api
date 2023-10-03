@@ -6,8 +6,10 @@ const router = express.Router();
 
 const contactAddSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string()
+    .pattern(/^[0-9]+$/, "numbers")
+    .required(),
 });
 
 router.get("/", async (req, res, next) => {
@@ -24,7 +26,7 @@ router.get("/:contactId", async (req, res, next) => {
     const { contactId } = req.params;
     const result = await contactService.getContactById(contactId);
     if (!result) {
-      throw HttpError(404, `Contact with id: ${contactId} not found`);
+      throw HttpError(404, "Not found");
     }
     res.json(result);
   } catch (error) {
@@ -40,7 +42,7 @@ router.post("/", async (req, res, next) => {
     console.log(req.body);
     const { error } = contactAddSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, "missing required fields");
+      throw HttpError(400, "missing required name field");
     }
     const result = await contactService.addContact(req.body);
     res.status(201).json(result);
@@ -54,7 +56,7 @@ router.delete("/:contactId", async (req, res, next) => {
     const { contactId } = req.params;
     const result = await contactService.removeContact(contactId);
     if (!result) {
-      throw HttpError(404, `Contact with id: ${contactId} not found`);
+      throw HttpError(404, "Not found");
     }
     res.json({
       message: "Delete success",
@@ -68,12 +70,12 @@ router.put("/:contactId", async (req, res, next) => {
   try {
     const { error } = contactAddSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, "missing required fields");
+      throw HttpError(400, "missing fields");
     }
     const { contactId } = req.params;
     const result = await contactService.updateContact(contactId, req.body);
     if (!result) {
-      throw HttpError(404, `Contact with id: ${contactId} not found`);
+      throw HttpError(404, "Not found");
     }
     res.json(result);
   } catch (error) {
