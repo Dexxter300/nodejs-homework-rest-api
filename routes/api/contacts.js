@@ -6,7 +6,7 @@ const router = express.Router();
 
 const contactAddSchema = Joi.object({
   name: Joi.string().required().messages({
-    "any.required": `"title" required field`,
+    "any.required": `missing required "title" field`,
   }),
   email: Joi.string().email().required(),
   phone: Joi.string()
@@ -70,6 +70,10 @@ router.delete("/:contactId", async (req, res, next) => {
 
 router.put("/:contactId", async (req, res, next) => {
   try {
+    const body = req.body;
+    if (!Object.keys(body).length) {
+      throw HttpError(400, "missing fields");
+    }
     const { error } = contactAddSchema.validate(req.body);
     if (error) {
       throw HttpError(400, error.message);
