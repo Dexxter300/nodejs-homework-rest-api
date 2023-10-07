@@ -5,10 +5,12 @@ import Joi from "joi";
 const router = express.Router();
 
 const contactAddSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().required().messages({
+    "any.required": `"title" required field`,
+  }),
   email: Joi.string().email().required(),
   phone: Joi.string()
-    .pattern(/^[0-9]+$/, "numbers")
+    .pattern(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/, "numbers")
     .required(),
 });
 
@@ -42,7 +44,7 @@ router.post("/", async (req, res, next) => {
     console.log(req.body);
     const { error } = contactAddSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, "missing required name field");
+      throw HttpError(400, error.message);
     }
     const result = await contactService.addContact(req.body);
     res.status(201).json(result);
@@ -70,7 +72,7 @@ router.put("/:contactId", async (req, res, next) => {
   try {
     const { error } = contactAddSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, "missing fields");
+      throw HttpError(400, error.message);
     }
     const { contactId } = req.params;
     const result = await contactService.updateContact(contactId, req.body);
