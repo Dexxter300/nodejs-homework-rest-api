@@ -24,12 +24,6 @@ const contactAddSchema = Joi.object({
     .messages({
       "any.required": `missing required phone field`,
     }),
-  owner: {
-    type: Schema.Types.ObjectId,
-
-    ref: "user",
-    required: true,
-  },
   favorite: Joi.boolean(),
 });
 
