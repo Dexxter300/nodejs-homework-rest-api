@@ -5,11 +5,13 @@ import { HttpError } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 
 const getAll = async (req, res) => {
-  const result = await Contact.find();
+  const { _id: owner } = req.user;
+  const result = await Contact.find({ owner });
   res.json(result);
 };
 
 const getById = async (req, res) => {
+  const { _id: owner } = req.user;
   const { contactId } = req.params;
   const result = await Contact.findById(contactId);
   if (!result) {
@@ -19,7 +21,8 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const result = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const result = await Contact.create({ owner, ...req.body });
   res.status(201).json(result);
 };
 

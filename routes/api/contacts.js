@@ -1,8 +1,13 @@
 import express from "express";
 import contactsController from "../../controllers/contacts-controller.js";
+import { Schema, model } from "mongoose";
 import { HttpError } from "../../helpers/index.js";
 import Joi from "joi";
-import { isEmptyBody, isValidId } from "../../middlewares/index.js";
+import {
+  authenticate,
+  isEmptyBody,
+  isValidId,
+} from "../../middlewares/index.js";
 import { validateBody } from "../../decorators/index.js";
 const router = express.Router();
 
@@ -31,6 +36,8 @@ const contactUpdateFavoriteSchema = Joi.object({
 const contactAddValidate = validateBody(contactAddSchema);
 
 const contactValidateFavorite = validateBody(contactUpdateFavoriteSchema);
+
+router.use(authenticate);
 
 router.get("/", contactsController.getAll);
 
