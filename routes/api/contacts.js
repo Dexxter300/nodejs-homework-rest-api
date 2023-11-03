@@ -7,6 +7,7 @@ import {
   authenticate,
   isEmptyBody,
   isValidId,
+  upload,
 } from "../../middlewares/index.js";
 import { validateBody } from "../../decorators/index.js";
 const router = express.Router();
@@ -43,7 +44,13 @@ router.get("/", contactsController.getAll);
 
 router.get("/:contactId", isValidId, contactsController.getById);
 
-router.post("/", isEmptyBody, contactAddValidate, contactsController.add);
+router.post(
+  "/",
+  upload.single("avatar"),
+  isEmptyBody,
+  contactAddValidate,
+  contactsController.add
+);
 
 router.delete("/:contactId", isValidId, contactsController.deleteById);
 
