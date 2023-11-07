@@ -74,7 +74,7 @@ const resendVerifyEmail = async (req, res) => {
     throw HttpError(404, "Email not found");
   }
   if (user.verify) {
-    throw HttpError(400, "Email already verify");
+    throw HttpError(400, "Verification has already been passed");
   }
 
   const verifyEmail = {
@@ -85,7 +85,7 @@ const resendVerifyEmail = async (req, res) => {
   await sendEmail(verifyEmail);
 
   res.json({
-    message: "Verify email send",
+    message: "Verification email sent",
   });
 };
 
@@ -104,7 +104,7 @@ const verify = async (req, res) => {
   });
 
   res.json({
-    message: "Verify success",
+    message: "Verification successful",
   });
 };
 
