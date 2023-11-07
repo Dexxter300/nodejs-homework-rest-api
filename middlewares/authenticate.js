@@ -21,7 +21,7 @@ const authenticate = async (req, res, next) => {
     const user = await User.findById(id);
     console.log(user);
     if (!user || !user.token) {
-      console.log("lolo");
+      // console.log("lolo");
       throw HttpError(401);
     }
     req.user = user;
